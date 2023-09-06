@@ -2,6 +2,7 @@ package com.cubix.extsearchbatch.entity;
 
 import com.cubix.extsearchbatch.dto.NaverNewsItemDto;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,6 +37,14 @@ public class NewsEntity {
     private LocalDateTime updatedAt;
 
     public NewsEntity(NaverNewsItemDto dto) {
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.url = dto.getLink();
+        this.publishedAt = dto.getPubDate();
+    }
+
+    @Transactional
+    public void update(NaverNewsItemDto dto) {
         this.title = dto.getTitle();
         this.description = dto.getDescription();
         this.url = dto.getLink();
