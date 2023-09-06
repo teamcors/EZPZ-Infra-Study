@@ -19,7 +19,7 @@ public class ApiController {
         this.templateService = templateService;
     }
 
-    @Scheduled(cron = "0 48 14 * * *", zone = "Asia/Seoul") // cron = "0 0 3 * * *"
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     @GetMapping("/naver")
     public String naver() throws CharacterCodingException {
         return templateService.naverApiTest();
