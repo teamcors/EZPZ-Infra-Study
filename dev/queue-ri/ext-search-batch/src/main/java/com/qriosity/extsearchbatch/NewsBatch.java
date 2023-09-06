@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -26,11 +25,11 @@ public class NewsBatch {
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // test: */20 * * * * *
     public void fetch() {
-        NaverNewsResponse response = restTemplate.exchange(
+        NaverNewsResponseDto response = restTemplate.exchange(
                 "https://openapi.naver.com/v1/search/news.json?query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim",
                 HttpMethod.GET,
                 new HttpEntity<>(createHttpHeaders()),
-                NaverNewsResponse.class
+                NaverNewsResponseDto.class
         ).getBody();
 
         List<NaverNewsItem> items = response.getItems();

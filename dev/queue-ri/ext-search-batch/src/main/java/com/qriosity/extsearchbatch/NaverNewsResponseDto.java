@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class NaverNewsResponse {
+public class NaverNewsResponseDto {
     private String lastBuildDate;
     private Long total;
     private Long start;
