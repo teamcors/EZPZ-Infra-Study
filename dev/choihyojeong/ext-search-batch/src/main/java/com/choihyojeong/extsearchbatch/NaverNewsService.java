@@ -1,14 +1,10 @@
 package com.choihyojeong.extsearchbatch;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.nio.charset.CharacterCodingException;
 
 
 @RequiredArgsConstructor
@@ -67,12 +62,22 @@ public class NaverNewsService {
         List<NaverNewsItem> newsItem = resultVO.getItems();
 
         for (NaverNewsItem news : newsItem){ // NaverNews news는 지금 새로 리스트에 들어온거
+            
+            //System.out.println(news);
             NaverNewsItem findNews = NaverNewsRepo.findByTitle((news.getTitle())); //find news는 DB에서 찾아온 거
+
+            String oldNews = findNews.getLink();
+            String newNews = news.getLink();
+
+
             if (findNews == null) { //없으면 저장해주면 됨
                 NaverNewsRepo.save(news);
                 System.out.println("뉴스 데이터 적재 완료");
             }
             else { //--> 덮어쓰는 형식
+                if(!oldNews.equals(newNews)){ //링크가 안 같을 때에는 업데이트 함
+                    //System.out.println(news.getLink()+"  /  "+findNews.getLink());
+                    //System.out.println(oldNews+"  /  "+newNews);
                     findNews.setDescription(news.getDescription());
                     findNews.setLink(news.getLink());
                     findNews.setOriginallink(news.getOriginallink());
@@ -82,6 +87,11 @@ public class NaverNewsService {
                     // 2023.9.13 다시 진행해보니 해결 -> pubDate로 수정
                     NaverNewsRepo.save(findNews);
                     System.out.println(findNews.getTitle() + ": 뉴스 데이터 업데이트 완료");
+                }
+                else //링크까지 같을 때에는 새로 업데이트 안함
+                {
+                    System.out.println(findNews.getTitle() + ": 최신 뉴스입니다.");
+                }
             }
         }
     }
