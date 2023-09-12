@@ -14,5 +14,5 @@ public class NewsVO {
     private String originallink;
     private String link;
     private String description;
-    private String pub_date;
+    private String pubDate;
 }

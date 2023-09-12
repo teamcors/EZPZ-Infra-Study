@@ -33,7 +33,7 @@ public class NaverNewsItem {
     @Column(nullable = false)//length = 500)
     private String description;
 
-    private String pub_date;
+    private String pubDate;
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
