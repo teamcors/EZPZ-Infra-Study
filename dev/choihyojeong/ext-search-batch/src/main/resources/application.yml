@@ -24,3 +24,4 @@ naver :
     secret: 3tsQ5Irie_
   base:
     url: https://openapi.naver.com/v1/search/news.json
+    path: /v1/search/news.json
