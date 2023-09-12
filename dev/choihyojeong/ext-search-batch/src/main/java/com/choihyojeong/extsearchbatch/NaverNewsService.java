@@ -38,49 +38,59 @@ public class NaverNewsService {
     @Value("${naver.base.url}")
     private String baseUrl;
 
+    @Value("${naver.base.path}")
+    private String path;
+
     @Scheduled(cron = "0 0 3 * * *",zone = "Asia/Seoul")
     public void naverNewsApi ()  {
-        String BUrl = baseUrl
-                + "?query=" +"%EC%A3%BC%EC%8B%9D&"
-                + "&display=" + 10
-                + "&start=" + 1
-                + "&sort=" + "sim";
+        URI BUrl = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .path(path)
+                .queryParam("query","주식")
+                .queryParam("display",10)
+                .queryParam("start",1)
+                .queryParam("sort","sim")
+                .encode()
+                .build()
+                .toUri();
 
         //System.out.println(baseUrl);
         //System.out.println(BUrl);
 
-        //URI 사용해서 진행했을 때 요청이 안갔음 변환시켜줌
-        MultiValueMap<String, String> createHttpHeaders;
+        MultiValueMap<String, String> httpConnect;
         NaverResultVO resultVO = restTemplate.exchange(
                 BUrl, HttpMethod.GET,
-                new HttpEntity<>(createHttpHeaders()),
+                new HttpEntity<>(httpConnect()),
                 NaverResultVO.class
         ).getBody();
 
         List<NaverNewsItem> newsItem = resultVO.getItems();
 
         for (NaverNewsItem news : newsItem){ // NaverNews news는 지금 새로 리스트에 들어온거
-            NaverNewsItem findNews = NaverNewsRepo.findByTitle((news.getTitle())); //DB에서 찾아온 거
+            NaverNewsItem findNews = NaverNewsRepo.findByTitle((news.getTitle())); //find news는 DB에서 찾아온 거
             if (findNews == null) { //없으면 저장해주면 됨
                 NaverNewsRepo.save(news);
                 System.out.println("뉴스 데이터 적재 완료");
             }
-            else { //그냥 교체해주기 --> 덮어쓰는 형식
-                findNews.setDescription(news.getDescription());
-                findNews.setLink(news.getLink());
-                findNews.setOriginallink(news.getOriginallink());
-                findNews.setPub_date(news.getPub_date()); //pubDate로 진행했을 때에 mysql에서 pubDate 칼럼을 인식못하는 경우 발생 ->pub_Date로 해결
-                NaverNewsRepo.save(findNews);
-                System.out.println(findNews.getTitle() + "뉴스 데이터 업데이트 완료");
+            else { //--> 덮어쓰는 형식
+                    findNews.setDescription(news.getDescription());
+                    findNews.setLink(news.getLink());
+                    findNews.setOriginallink(news.getOriginallink());
+                    findNews.setPubDate(news.getPubDate());
+
+                    //pubDate로 진행했을 때에 mysql에서 pubDate 칼럼을 인식못하는 경우 발생 ->pub_Date로 해결
+                    // 2023.9.13 다시 진행해보니 해결 -> pubDate로 수정
+                    NaverNewsRepo.save(findNews);
+                    System.out.println(findNews.getTitle() + ": 뉴스 데이터 업데이트 완료");
             }
         }
     }
 
     //헤더 정보 세팅
-    private MultiValueMap<String, String> createHttpHeaders() {
+    private MultiValueMap<String, String> httpConnect() {
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Naver-Client-Id", clientId);
-        headers.add("X-Naver-Client-Secret", clientSecret);
+        headers.set("X-Naver-Client-Id", clientId);
+        headers.set("X-Naver-Client-Secret", clientSecret);
         return headers;
     }
 
