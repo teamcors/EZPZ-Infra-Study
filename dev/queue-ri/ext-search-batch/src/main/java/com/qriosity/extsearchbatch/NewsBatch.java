@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class NewsBatch {
         System.out.println("뉴스 데이터 적재 완료");
     }
 
+    @Transactional
     private void checkUpdate(NaverNewsItem newItem, NaverNewsItem oldItem) {
 //        // legacy code
 //        if (newItem.getDescription().compareTo(oldItem.getDescription()) != 0)
