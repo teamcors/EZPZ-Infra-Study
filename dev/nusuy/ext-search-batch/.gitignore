@@ -37,5 +37,4 @@ out/
 .vscode/
 
 ### Secret ###
-application.yml
 application.properties
