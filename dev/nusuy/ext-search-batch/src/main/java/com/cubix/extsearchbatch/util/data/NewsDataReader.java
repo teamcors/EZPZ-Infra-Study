@@ -10,6 +10,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -17,8 +20,13 @@ import org.springframework.web.client.RestTemplate;
 public class NewsDataReader {
     @Value("${OPEN_API_BASE_URL}")
     private String BASE_URL;
+
+    @Value("${OPEN_API_PATH}")
+    private String PATH;
+
     @Value("${OPEN_API_CLIENT_ID}")
     private String CLIENT_ID;
+
     @Value("${OPEN_API_CLIENT_SECRET}")
     private String CLIENT_SECRET;
 
@@ -36,22 +44,27 @@ public class NewsDataReader {
     }
 
     // Url setting
-    public String setUrl(int display, int start) {
-        return BASE_URL +
-                "?query=" + "주식" +
-                "&display=" + display +
-                "&start=" + start +
-                "&sort=" + "sim";
+    public URI setUri(int display, int start) {
+        return UriComponentsBuilder
+                .fromUriString(BASE_URL)
+                .path(PATH)
+                .queryParam("query", "주식")
+                .queryParam("display", display)
+                .queryParam("start", start)
+                .queryParam("sort", "date")
+                .encode()
+                .build()
+                .toUri();
     }
 
     // Naver API로 데이터 요청
     public NaverDataResponseDto get(int display, int start) throws Exception {
-        String url = setUrl(display, start);
+        URI uri = setUri(display, start);
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(setHeaders());
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<NaverDataResponseDto> response = restTemplate.exchange(
-                url, HttpMethod.GET, httpEntity, NaverDataResponseDto.class
+                uri, HttpMethod.GET, httpEntity, NaverDataResponseDto.class
         );
 
         if (!response.getStatusCode().is2xxSuccessful()) {
