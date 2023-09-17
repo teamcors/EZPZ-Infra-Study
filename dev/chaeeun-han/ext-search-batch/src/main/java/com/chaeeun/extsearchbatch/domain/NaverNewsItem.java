@@ -25,19 +25,19 @@ public class NaverNewsItem {
     @Column(name = "news_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String originallink;
 
-    @Column(nullable = false)
+    @Column
     private String link;
 
-    @Column(nullable = false)
+    @Column
     private String description;
 
-    @Column(nullable = false)
+    @Column
     private String pubDate;
 
     @CreationTimestamp
