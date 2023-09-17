@@ -31,16 +31,16 @@ public class DataUpdateService {
         log.info("Naver news data request started. --" + LocalDateTime.now());
 
         // Get total data count
+        final int DISPLAY_DEF = 100;
         boolean isEmptyDB = newsRepository.count() == 0;
-        int displayDef = 100;
         int totalCount = newsDataReader.get(1, 1).getTotal();
-        int batchCount = (int) Math.ceil((double) totalCount / displayDef);
-        int displayLast = totalCount % displayDef;
+        int batchCount = (int) Math.ceil((double) totalCount / DISPLAY_DEF);
+        int displayLast = totalCount % DISPLAY_DEF;
 
         try {
             for (int i = 1; i <= batchCount; i++) {
-                int start = (i - 1) * 100 + 1;
-                int display = i == batchCount ? displayLast : 100;
+                int start = (i - 1) * DISPLAY_DEF + 1;
+                int display = i == batchCount ? displayLast : DISPLAY_DEF;
 
                 // 요청 가능 범위 밖일 경우
                 if (start > 1000) {
