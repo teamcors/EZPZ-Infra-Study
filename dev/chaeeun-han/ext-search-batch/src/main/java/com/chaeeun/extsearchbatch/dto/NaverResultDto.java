@@ -1,4 +1,4 @@
-package com.chaeeun.extsearchbatch.vo;
+package com.chaeeun.extsearchbatch.dto;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Setter
 @Getter
-public class NaverResultVO {
+public class NaverResultDto {
     private String lastBuildDate;
     private int total;
     private int start;
