@@ -53,7 +53,13 @@ public class DataUpdateService {
                 ArrayList<NaverRawNewsItemDto> items = newsDataReader.get(display, start).getItems();
 
                 // Write data
-                newsDataWriter.write(isEmptyDB, items);
+                if (isEmptyDB) {
+                    // DB is empty (no need to validate)
+                    newsDataWriter.writeWithoutValidation(items);
+                } else {
+                    // DB is not empty (validation required)
+                    newsDataWriter.writeWithValidation(items);
+                }
             }
 
             log.info("Naver news data request completed successfully. --" + LocalDateTime.now());
