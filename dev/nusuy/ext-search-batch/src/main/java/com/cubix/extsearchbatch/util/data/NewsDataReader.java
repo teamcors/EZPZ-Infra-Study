@@ -1,6 +1,8 @@
 package com.cubix.extsearchbatch.util.data;
 
 import com.cubix.extsearchbatch.dto.NaverDataResponseDto;
+import com.cubix.extsearchbatch.exception.OpenApiRequestException;
+import com.cubix.extsearchbatch.exception.OpenApiResponseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -58,17 +61,22 @@ public class NewsDataReader {
     }
 
     // Naver API로 데이터 요청
-    public NaverDataResponseDto get(int display, int start) throws Exception {
+    public NaverDataResponseDto get(int display, int start) throws HttpClientErrorException {
         URI uri = setUri(display, start);
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(setHeaders());
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<NaverDataResponseDto> response = restTemplate.exchange(
-                uri, HttpMethod.GET, httpEntity, NaverDataResponseDto.class
-        );
+        ResponseEntity<NaverDataResponseDto> response;
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new Exception("Data request failed.");
+        try {
+            response = restTemplate.exchange(
+                    uri, HttpMethod.GET, httpEntity, NaverDataResponseDto.class
+            );
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().is5xxServerError())
+                throw new OpenApiResponseException(e.getStatusCode(), e.getMessage());
+            else
+                throw new OpenApiRequestException(e.getStatusCode(), e.getMessage());
         }
 
         return response.getBody();

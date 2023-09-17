@@ -2,6 +2,8 @@ package com.cubix.extsearchbatch.service;
 
 import com.cubix.extsearchbatch.dto.NaverRawNewsItemDto;
 import com.cubix.extsearchbatch.entity.NewsRepository;
+import com.cubix.extsearchbatch.exception.OpenApiRequestException;
+import com.cubix.extsearchbatch.exception.OpenApiResponseException;
 import com.cubix.extsearchbatch.util.data.NewsDataReader;
 import com.cubix.extsearchbatch.util.data.NewsDataWriter;
 import jakarta.annotation.PostConstruct;
@@ -22,29 +24,29 @@ public class DataUpdateService {
     private final NewsDataWriter newsDataWriter;
 
     @PostConstruct
-    public void onStartup() throws Exception {
+    public void onStartup() {
         updateNewsData();
     }
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
-    public void updateNewsData() throws Exception {
+    public void updateNewsData() {
         log.info("Naver news data request started. --" + LocalDateTime.now());
 
-        // Get total data count
         final int DISPLAY_DEF = 100;
         boolean isEmptyDB = newsRepository.count() == 0;
-        int totalCount = newsDataReader.get(1, 1).getTotal();
-        int batchCount = (int) Math.ceil((double) totalCount / DISPLAY_DEF);
-        int displayLast = totalCount % DISPLAY_DEF;
 
         try {
+            int totalCount = newsDataReader.get(1, 1).getTotal();
+            int batchCount = (int) Math.ceil((double) totalCount / DISPLAY_DEF);
+            int displayLast = totalCount % DISPLAY_DEF;
+
             for (int i = 1; i <= batchCount; i++) {
                 int start = (i - 1) * DISPLAY_DEF + 1;
                 int display = i == batchCount ? displayLast : DISPLAY_DEF;
 
                 // 요청 가능 범위 밖일 경우
                 if (start > 1000) {
-                    log.info("Naver news data request completed successfully. --" + LocalDateTime.now());
+                    log.info("Request limit (1,000) exceeded, stopping data collection. --" + LocalDateTime.now());
 
                     return;
                 }
@@ -63,9 +65,12 @@ public class DataUpdateService {
             }
 
             log.info("Naver news data request completed successfully. --" + LocalDateTime.now());
-        } catch (Exception e) {
+        } catch (OpenApiRequestException e) {
             e.printStackTrace();
-            throw new Exception(e.getMessage());
+            log.error("Naver API response status <" + e.getStatusCode().value() + ">: " + e.getMessage());
+        } catch (OpenApiResponseException e) {
+            e.printStackTrace();
+            log.error("Naver API response status <" + e.getStatusCode().value() + ">: " + e.getMessage());
         }
     }
 }
