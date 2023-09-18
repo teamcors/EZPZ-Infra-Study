@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 @Getter
-public class NaverResultVO {
+public class NaverResultDTO {
     private String lastBuildDate;
     private Long total;
     private Long start;
