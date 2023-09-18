@@ -12,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
 public class NaverNewsItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "news_id", unique = true, nullable = false)
+    @Column(name = "news_id")
     private Long id;
 
     @Column
