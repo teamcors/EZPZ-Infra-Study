@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,21 +59,21 @@ public class NaverNewsService {
         ).getBody();
 
         List<NaverNewsItem> newsItem = resultDTO.getItems();
+        List<NaverNewsItem> saveItem = new ArrayList<>();
 
         for (NaverNewsItem news : newsItem){ 
             
-            //System.out.println(news);
             NaverNewsItem findNews = NaverNewsRepo.findByTitle((news.getTitle())); 
 
-            String oldNews = findNews.getLink();
             String newNews = news.getLink();
 
 
             if (findNews == null) { 
-                NaverNewsRepo.save(news);
+                saveItem.add(news);
                 System.out.println("뉴스 데이터 적재 완료");
             }
             else {
+                String oldNews = findNews.getLink();
                 if(!oldNews.equals(newNews)){ 
                     findNews.setDescription(news.getDescription());
                     findNews.setLink(news.getLink());
@@ -80,7 +81,7 @@ public class NaverNewsService {
                     findNews.setPubDate(news.getPubDate());
 
 
-                    NaverNewsRepo.save(findNews);
+                    saveItem.add(findNews);
                     System.out.println(findNews.getTitle() + ": 뉴스 데이터 업데이트 완료");
                 }
                 else 
@@ -88,6 +89,7 @@ public class NaverNewsService {
                     System.out.println(findNews.getTitle() + ": 최신 뉴스입니다.");
                 }
             }
+            NaverNewsRepo.saveAll(saveItem);
         }
     }
 
