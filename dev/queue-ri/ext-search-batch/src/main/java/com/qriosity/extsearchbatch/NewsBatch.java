@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @Component
@@ -24,10 +26,21 @@ public class NewsBatch {
     @Value("${secrets.naver.secret}")
     private String CLIENT_SECRET;
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // test: */20 * * * * *
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // test: */20 * * * * *  prod: 0 0 3 * * *
     public void fetch() {
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://openapi.naver.com")
+                .path("/v1/search/news.json")
+                .queryParam("query","주식")
+                .queryParam("display",10)
+                .queryParam("start", 1)
+                .queryParam("sort","sim")
+                .encode()
+                .build()
+                .toUri();
+
         NaverNewsResponseDto response = restTemplate.exchange(
-                "https://openapi.naver.com/v1/search/news.json?query=%EC%A3%BC%EC%8B%9D&display=10&start=1&sort=sim",
+                uri,
                 HttpMethod.GET,
                 new HttpEntity<>(createHttpHeaders()),
                 NaverNewsResponseDto.class
