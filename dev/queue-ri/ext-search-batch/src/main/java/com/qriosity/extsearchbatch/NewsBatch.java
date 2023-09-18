@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +29,8 @@ public class NewsBatch {
     @Value("${secrets.naver.secret}")
     private String CLIENT_SECRET;
 
-    @Scheduled(cron = "*/20 * * * * *", zone = "Asia/Seoul") // test: */20 * * * * *  prod: 0 0 3 * * *
+    @Transactional
+    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // test: */20 * * * * *  prod: 0 0 3 * * *
     public void fetch() {
         URI uri = UriComponentsBuilder
                 .fromUriString("https://openapi.naver.com")
@@ -49,16 +51,17 @@ public class NewsBatch {
         ).getBody();
 
         List<NaverNewsItem> items = response.getItems();
+        List<NaverNewsItem> newItems = new ArrayList<>();
         for (NaverNewsItem item : items) {
             NaverNewsItem data = newsRepo.findByTitle(item.getTitle());
-            if (data == null) newsRepo.save(item);
-            else checkUpdate(item, data);
+            if (data != null) newItems.add(updateData(item, data));
+            else newItems.add(item);
         }
+        newsRepo.saveAll(newItems);
         log.info("뉴스 데이터 적재 완료");
     }
 
-    @Transactional
-    private void checkUpdate(NaverNewsItem newItem, NaverNewsItem oldItem) {
+    private NaverNewsItem updateData(NaverNewsItem newItem, NaverNewsItem oldItem) {
 //        // legacy code
 //        if (newItem.getDescription().compareTo(oldItem.getDescription()) != 0)
 //            oldItem.setDescription(newItem.getDescription());
@@ -75,7 +78,7 @@ public class NewsBatch {
         oldItem.setOriginallink(newItem.getOriginallink());
         oldItem.setPubDate(newItem.getPubDate());
         // oldItem.setUpdatedAt(LocalDateTime.now()); // 엔티티 어노테이션으로 대체
-        newsRepo.save(oldItem);
+        return oldItem;
     }
 
     private HttpHeaders createHttpHeaders() {
