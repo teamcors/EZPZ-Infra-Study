@@ -4,14 +4,13 @@ import lombok.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpHeaders;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class NaverNewsService {
 
     @Value("${naver.base.path}")
     private String path;
-
+    @Transactional
     @Scheduled(cron = "0 0 3 * * *",zone = "Asia/Seoul")
     public void naverNewsApi ()  {
         URI BUrl = UriComponentsBuilder
@@ -53,13 +52,13 @@ public class NaverNewsService {
         //System.out.println(BUrl);
 
         MultiValueMap<String, String> httpConnect;
-        NaverResultVO resultVO = restTemplate.exchange(
+        NaverResultDTO resultDTO = restTemplate.exchange(
                 BUrl, HttpMethod.GET,
                 new HttpEntity<>(httpConnect()),
-                NaverResultVO.class
+                NaverResultDTO.class
         ).getBody();
 
-        List<NaverNewsItem> newsItem = resultVO.getItems();
+        List<NaverNewsItem> newsItem = resultDTO.getItems();
 
         for (NaverNewsItem news : newsItem){ // NaverNews news는 지금 새로 리스트에 들어온거
             
