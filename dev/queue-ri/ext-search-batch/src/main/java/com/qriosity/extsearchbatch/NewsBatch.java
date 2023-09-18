@@ -1,6 +1,7 @@
 package com.qriosity.extsearchbatch;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class NewsBatch {
@@ -26,7 +28,7 @@ public class NewsBatch {
     @Value("${secrets.naver.secret}")
     private String CLIENT_SECRET;
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul") // test: */20 * * * * *  prod: 0 0 3 * * *
+    @Scheduled(cron = "*/20 * * * * *", zone = "Asia/Seoul") // test: */20 * * * * *  prod: 0 0 3 * * *
     public void fetch() {
         URI uri = UriComponentsBuilder
                 .fromUriString("https://openapi.naver.com")
@@ -52,7 +54,7 @@ public class NewsBatch {
             if (data == null) newsRepo.save(item);
             else checkUpdate(item, data);
         }
-        System.out.println("뉴스 데이터 적재 완료");
+        log.info("뉴스 데이터 적재 완료");
     }
 
     @Transactional
