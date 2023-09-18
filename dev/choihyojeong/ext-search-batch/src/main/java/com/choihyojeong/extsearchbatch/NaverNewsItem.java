@@ -21,16 +21,16 @@ public class NaverNewsItem {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)//, length = 200)
+    @Column // length = 200
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String originallink;
 
-    @Column(nullable = false)
+    @Column
     private String link;
 
-    @Column(nullable = false)//length = 500)
+    @Column //length = 500
     private String description;
 
     private String pubDate;
