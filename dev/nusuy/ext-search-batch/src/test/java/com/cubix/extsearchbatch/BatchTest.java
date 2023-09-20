@@ -47,4 +47,21 @@ public class BatchTest {
             assertThat(newsRepository.findTop1ByTitle(news.getTitle())).isNotNull();
         }
     }
+
+    @DisplayName("Query 테스트")
+    @Test
+    public void queryTest() {
+        // given
+        String query = "주식";
+
+        // when
+        dataUpdateService.updateNewsData();
+
+        // then
+        ArrayList<NewsEntity> resultData = dataUpdateService.getResultData();
+        for (NewsEntity news : resultData) {
+            boolean isPassed = news.getTitle().contains(query) || news.getDescription().contains(query);
+            assertThat(isPassed).isTrue();
+        }
+    }
 }
