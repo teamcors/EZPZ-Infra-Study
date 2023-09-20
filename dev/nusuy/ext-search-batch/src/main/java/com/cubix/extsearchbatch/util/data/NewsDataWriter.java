@@ -25,7 +25,7 @@ public class NewsDataWriter {
     }
 
     @Transactional
-    public void writeWithValidation(ArrayList<NaverRawNewsItemDto> items) {
+    public ArrayList<NewsEntity> writeWithValidation(ArrayList<NaverRawNewsItemDto> items) {
         ArrayList<NewsEntity> validatedItems = new ArrayList<>();
 
         for (NaverRawNewsItemDto rawNewsItemDto : items) {
@@ -42,9 +42,11 @@ public class NewsDataWriter {
 
         // Save data
         newsRepository.saveAll(validatedItems);
+
+        return validatedItems;
     }
 
-    public void writeWithoutValidation(ArrayList<NaverRawNewsItemDto> items) {
+    public ArrayList<NewsEntity> writeWithoutValidation(ArrayList<NaverRawNewsItemDto> items) {
         ArrayList<NewsEntity> resultList = new ArrayList<>();
 
         for (NaverRawNewsItemDto rawNewsItemDto : items) {
@@ -53,5 +55,7 @@ public class NewsDataWriter {
 
         // Save data
         newsRepository.saveAll(resultList);
+
+        return resultList;
     }
 }
