@@ -50,6 +50,10 @@ public class NewsBatch {
                 NaverNewsResponseDto.class
         ).getBody();
 
+        saveItems(response);
+    }
+
+    public void saveItems(NaverNewsResponseDto response) {
         List<NaverNewsItem> items = response.getItems();
         List<NaverNewsItem> newItems = new ArrayList<>();
         for (NaverNewsItem item : items) {
