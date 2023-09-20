@@ -42,7 +42,7 @@ public class NewsBatchService {
                 .queryParam("query","주식")
                 .queryParam("display",10)
                 .queryParam("start", 1)
-                .queryParam("sort","sim")
+                .queryParam("sort","date") // default: sim
                 .encode()
                 .build()
                 .toUri();
