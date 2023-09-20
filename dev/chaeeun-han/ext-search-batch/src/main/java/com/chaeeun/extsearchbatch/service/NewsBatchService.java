@@ -6,6 +6,7 @@ import com.chaeeun.extsearchbatch.repository.NaverNewsItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class NewsBatchService {
-    private final NaverNewsItemRepository newsRepo;
+    @Autowired NaverNewsItemRepository newsRepo;
     private RestTemplate restTemplate = new RestTemplate();
 
     @Value("${NAVER.CLIENT_ID}")
