@@ -61,4 +61,14 @@ public class NewsBatchServiceTest {
         assertEquals(currentRowCount + 10, newsRepo.count());
     }
 
+    @Test
+    public void 주식_단어가_포함되어있다() throws Exception {
+        List<NaverNewsItem> newsData = newsRepo.findAll();
+
+        assertTrue(!newsData.isEmpty());
+
+        for (NaverNewsItem item : newsData) {
+            assertTrue(item.getTitle().contains("주식") || item.getDescription().contains("주식"));
+        }
+    }
 }
