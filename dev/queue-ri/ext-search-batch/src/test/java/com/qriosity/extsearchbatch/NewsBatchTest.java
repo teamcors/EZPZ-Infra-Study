@@ -70,6 +70,24 @@ public class NewsBatchTest {
             log.info("- title: " + newItem.getTitle() + ", pub_date: " + newItem.getPubDate());
     }
 
+    @Test
+    @DisplayName("키워드 포함 여부 테스트")
+    void checkKeyword() {
+        // given, when
+        NewsBatch batch = new NewsBatch(newsRepo);
+        NaverNewsResponseDto response = getResponse();
+
+        // then
+        List<NaverNewsItem> items = response.getItems();
+        for (NaverNewsItem item : items) {
+            if (!item.getTitle().contains(KEYWORD) && !item.getDescription().contains(KEYWORD))
+                Assertions.fail("다음의 응답 데이터에 키워드가 없습니다: " + item.getTitle()); // test fail
+        }
+
+        log.info("키워드 검사 완료: 성공(" + items.size() + ")");
+    }
+
+
     URI getUri() {
         return UriComponentsBuilder
                 .fromUriString("https://openapi.naver.com")
