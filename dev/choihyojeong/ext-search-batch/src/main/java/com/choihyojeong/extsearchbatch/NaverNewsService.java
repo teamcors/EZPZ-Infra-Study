@@ -45,7 +45,7 @@ public class NaverNewsService {
                 .queryParam("query","주식")
                 .queryParam("display",10)
                 .queryParam("start",1)
-                .queryParam("sort","sim")
+                .queryParam("sort","date")
                 .encode()
                 .build()
                 .toUri();
