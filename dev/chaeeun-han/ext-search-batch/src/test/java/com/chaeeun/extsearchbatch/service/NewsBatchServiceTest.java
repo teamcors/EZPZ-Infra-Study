@@ -51,7 +51,8 @@ public class NewsBatchServiceTest {
 
     @Test
     @Rollback(false)
-    public void 적재_개수가_10개다() throws Exception {
+    @DisplayName("적재_개수가_10개다")
+    public void newsBatchTest() throws Exception {
         // 현재 데이터베이스에 저장된 행 수를 조회
         long currentRowCount = newsRepo.count();
 
@@ -62,7 +63,8 @@ public class NewsBatchServiceTest {
     }
 
     @Test
-    public void 주식_단어가_포함되어있다() throws Exception {
+    @DisplayName("주식_단어가_포함되어있다")
+    public void newsKeywordTest() throws Exception {
         List<NaverNewsItem> newsData = newsRepo.findAll();
 
         assertTrue(!newsData.isEmpty());
