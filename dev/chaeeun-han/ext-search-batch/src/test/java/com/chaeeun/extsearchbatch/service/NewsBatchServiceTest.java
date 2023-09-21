@@ -31,18 +31,18 @@ public class NewsBatchServiceTest {
     private NaverNewsItemRepository newsRepo;
 
     @Value("${NAVER.CLIENT_ID}")
-    private String clientId;
+    private String CLIENT_ID;
 
     @Value("${NAVER.CLIENT_SECRET}")
-    private String clientSecret;
+    private String CLIENT_SECRET;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
         // clientId와 clientSecret를 newsBatchService에 주입
-        ReflectionTestUtils.setField(newsBatchService, "clientId", clientId);
-        ReflectionTestUtils.setField(newsBatchService, "clientSecret", clientSecret);
+        ReflectionTestUtils.setField(newsBatchService, "CLIENT_ID", CLIENT_ID);
+        ReflectionTestUtils.setField(newsBatchService, "CLIENT_SECRET", CLIENT_SECRET);
 
         // newsRepo를 Mock 객체로 초기화
         newsBatchService.newsRepo = newsRepo;

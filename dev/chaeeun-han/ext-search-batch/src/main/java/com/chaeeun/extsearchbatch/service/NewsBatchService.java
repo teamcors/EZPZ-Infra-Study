@@ -27,10 +27,10 @@ public class NewsBatchService {
     private RestTemplate restTemplate = new RestTemplate();
 
     @Value("${NAVER.CLIENT_ID}")
-    private String clientId;
+    private String CLIENT_ID;
 
     @Value("${NAVER.CLIENT_SECRET}")
-    private String clientSecret;
+    private String CLIENT_SECRET;
 
     @Transactional
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
@@ -49,8 +49,8 @@ public class NewsBatchService {
 
         RequestEntity<Void> req = RequestEntity
                 .get(uri)
-                .header("X-Naver-Client-Id",clientId)
-                .header("X-Naver-Client-Secret",clientSecret)
+                .header("X-Naver-Client-Id",CLIENT_ID)
+                .header("X-Naver-Client-Secret",CLIENT_SECRET)
                 .build();
 
         ResponseEntity<NaverResultDto> searchList = restTemplate.exchange(req, NaverResultDto.class);
