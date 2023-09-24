@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+        stage('Print Hello') {
+            steps {
+                echo '* * * SUCCESS: Hello Jenkins!'
+            }
+        }
+    }
+
+    /* Cleanup workspace */
+    post {
+       always {
+           deleteDir()
+       }
+   }
+}
