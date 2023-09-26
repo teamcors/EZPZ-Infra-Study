@@ -40,11 +40,7 @@ class NaverNewsBatchTest {
     @Value("${naver.client.secret}")
     private String CLIENT_SECRET;
 
-    @Value("${naver.base.url}")
-    private String BASE_URL;
-
-    @Value("${naver.base.path}")
-    private String PATH;
+    
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateDate;
