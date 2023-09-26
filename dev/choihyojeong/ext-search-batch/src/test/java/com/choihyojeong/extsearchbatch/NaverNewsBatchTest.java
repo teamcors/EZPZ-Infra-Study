@@ -1,25 +1,11 @@
 package com.choihyojeong.extsearchbatch;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.core.Local;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.format.annotation.DateTimeFormat;;
 import org.assertj.core.api.Assertions;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.client.RestTemplate;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -33,20 +19,9 @@ class NaverNewsBatchTest {
     NaverNewsRepository NaverNewsRepoTest;
     @Autowired
     NaverNewsService NaverNewsService;
-    
-    @Value("${naver.client.id}")
-    private String CLIENT_ID;
-
-    @Value("${naver.client.secret}")
-    private String CLIENT_SECRET;
-
-    
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateDate;
-
-
-    private RestTemplate restTemplate = new RestTemplate();
 
     int success = 0;
     
@@ -56,20 +31,17 @@ class NaverNewsBatchTest {
         //given
         int saveNewsLen = 0; // DB에 저장된 뉴스 개수
         NaverNewsService.naverNewsApi();
-
         updateDate = LocalDateTime.now();
         String checkUpDate = updateDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime currentDate = LocalDateTime.parse(checkUpDate,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-
         //when
-        // DB에 적재된 뉴스 개수를 불러올 방법을 생각해야함
-        // 1. 최근 10개를 불러와 (id로)
+        // 1. DB에 적재된 최근 10개를 id로 불러옴
         List<NaverNewsItem> findtop10 = NaverNewsRepoTest.findTop10ByOrderByIdDesc(); //id 내림차순으로 top 10개 가져옴
         List<String> latestTitle = findtop10.stream().map(NaverNewsItem::getTitle).collect(Collectors.toList()); //top 10개에서 title만 구함
         List<LocalDateTime> latestDate = findtop10.stream().map(NaverNewsItem::getUpdated_at).collect(Collectors.toList());
 
-        // 2. 불러온 10개 중에 업데이트 된 시간이 현재시간인지
+        // 2. 불러온 10개 중에 업데이트 된 시간이 현재시간인지 (현재시간 오차범쉬 +- 1초)
         for(int i=0; i<10; i++){
             if(latestDate.get(i).equals(currentDate) || latestDate.get(i).equals(currentDate.plusSeconds(1)) || latestDate.get(i).equals(currentDate.minusSeconds(1))){
                 log.info("새로 적재된 뉴스입니다 : " +latestTitle.get(i));
@@ -84,7 +56,6 @@ class NaverNewsBatchTest {
         //then
         // 3. 그 개수가 0에서 10사이인지
         Assertions.assertThat(saveNewsLen).as("새로 적재된 뉴스의 개수가 0~10범위에 들지 않음").isBetween(0,10);
-
     }
 
     @Test
@@ -94,14 +65,12 @@ class NaverNewsBatchTest {
         //given
         List<NaverNewsItem> findtop10 = NaverNewsRepoTest.findTop10ByOrderByIdDesc(); //id 내림차순으로 top 10개 가져옴
 
-        //top 10개에서 title만 구함
         // 1. findtop10 list에서 gettitle로 title만 받아와 새로운 list로 저장
         List<String> latestTitle = findtop10.stream().map(NaverNewsItem::getTitle).collect(Collectors.toList());
 
         //when
         for (int i = 0; i < 10; i++) {
-            // 1. 최신 10개의 뉴스에
-            // 2.decription과 title에 '주식' 키워드가 있는지
+            // decription과 title에 '주식' 키워드가 있는지
             if(latestTitle != null) {
                 NaverNewsItem savedNews = NaverNewsRepoTest.findByTitle((latestTitle.get(i)));
                 if (savedNews.getTitle().contains("주식")) {
@@ -117,11 +86,5 @@ class NaverNewsBatchTest {
 
         //then
         Assertions.assertThat(success).as("주식키워드가 들어간 뉴스가 10개가 아님").isEqualTo(10);
-    }
-    private MultiValueMap<String, String> httpConnect() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", CLIENT_ID);
-        headers.set("X-Naver-Client-Secret", CLIENT_SECRET);
-        return headers;
     }
 }
