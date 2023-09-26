@@ -1,7 +1,6 @@
 package com.cubix.extsearchbatch.service;
 
 import com.cubix.extsearchbatch.dto.NaverRawNewsItemDto;
-import com.cubix.extsearchbatch.entity.NewsEntity;
 import com.cubix.extsearchbatch.entity.NewsRepository;
 import com.cubix.extsearchbatch.exception.OpenApiRequestException;
 import com.cubix.extsearchbatch.exception.OpenApiResponseException;
@@ -23,8 +22,6 @@ public class DataUpdateService {
     private final NewsRepository newsRepository;
     private final NewsDataReader newsDataReader;
     private final NewsDataWriter newsDataWriter;
-    private ArrayList<NaverRawNewsItemDto> rawData;
-    private ArrayList<NewsEntity> resultData;
 
     @PostConstruct
     public void onStartup() {
@@ -33,8 +30,6 @@ public class DataUpdateService {
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void updateNewsData() {
-        rawData = new ArrayList<>();
-        resultData = new ArrayList<>();
         log.info("Naver news data request started. --" + LocalDateTime.now());
 
         final int DISPLAY_DEF = 100;
@@ -58,15 +53,14 @@ public class DataUpdateService {
 
                 // Get data
                 ArrayList<NaverRawNewsItemDto> items = newsDataReader.get(display, start).getItems();
-                rawData.addAll(items);
 
                 // Write data
                 if (isEmptyDB) {
                     // DB is empty (no need to validate)
-                    resultData.addAll(newsDataWriter.writeWithoutValidation(items));
+                    newsDataWriter.writeWithoutValidation(items);
                 } else {
                     // DB is not empty (validation required)
-                    resultData.addAll(newsDataWriter.writeWithValidation(items));
+                    newsDataWriter.writeWithValidation(items);
                 }
             }
 
@@ -78,13 +72,5 @@ public class DataUpdateService {
             e.printStackTrace();
             log.error("Naver API response status <" + e.getStatusCode().value() + ">: " + e.getMessage());
         }
-    }
-
-    public ArrayList<NaverRawNewsItemDto> getRawData() {
-        return rawData;
-    }
-
-    public ArrayList<NewsEntity> getResultData() {
-        return resultData;
     }
 }
