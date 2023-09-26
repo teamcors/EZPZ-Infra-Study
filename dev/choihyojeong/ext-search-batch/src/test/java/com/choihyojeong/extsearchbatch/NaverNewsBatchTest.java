@@ -22,11 +22,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @SpringBootTest
 class NaverNewsBatchTest {
-
 
 
     @Autowired
@@ -72,14 +72,14 @@ class NaverNewsBatchTest {
         // 2. 불러온 10개 중에 업데이트 된 시간이 현재시간인지
         for(int i=0; i<10; i++){
             if(latestDate.get(i).equals(currentDate) || latestDate.get(i).equals(currentDate.plusSeconds(1)) || latestDate.get(i).equals(currentDate.minusSeconds(1))){
-                System.out.println("새로 적재된 뉴스입니다 : " +latestTitle.get(i));
+                log.info("새로 적재된 뉴스입니다 : " +latestTitle.get(i));
                 saveNewsLen = saveNewsLen +1;
             }
             else{
-                System.out.println("새로 적재된 뉴스가 아닙니다 : "+latestTitle.get(i));
+                log.info("새로 적재된 뉴스가 아닙니다 : "+latestTitle.get(i));
             }
         }
-        System.out.println("적재된 뉴스 개수"+ saveNewsLen);
+        log.info("적재된 뉴스 개수"+ saveNewsLen);
 
         //then
         // 3. 그 개수가 0에서 10사이인지
@@ -111,7 +111,7 @@ class NaverNewsBatchTest {
                 }
             }
             else {
-                System.out.println("적재된 뉴스 데이터가 없습니다");
+                log.info("적재된 뉴스 데이터가 없습니다");
             }
         }
 
