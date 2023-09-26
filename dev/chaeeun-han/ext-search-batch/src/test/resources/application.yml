@@ -9,8 +9,6 @@ spring:
     url: ${DB.url}
     username: ${DB.username}
     password: ${DB.password}
-  thymeleaf:
-    cache: false
   profiles:
     include:
       - secrets
