@@ -21,7 +21,6 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("dev")
 @Transactional
 public class NewsBatchTest {
 
