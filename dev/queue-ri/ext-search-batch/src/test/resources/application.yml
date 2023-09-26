@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username:
+    password:
+  jpa:
+    database: mysql # Unable to determine Dialect without JDBC metadata
+    database-platform: org.hibernate.dialect.MySQL8Dialect # Unable to determine Dialect without JDBC metadata
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  profiles:
+    include: >
+      secrets

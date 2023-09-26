@@ -38,7 +38,7 @@ public class NewsBatch {
                 .queryParam("query","주식")
                 .queryParam("display",10)
                 .queryParam("start", 1)
-                .queryParam("sort","sim")
+                .queryParam("sort","date")
                 .encode()
                 .build()
                 .toUri();
@@ -50,6 +50,10 @@ public class NewsBatch {
                 NaverNewsResponseDto.class
         ).getBody();
 
+        saveItems(response);
+    }
+
+    public void saveItems(NaverNewsResponseDto response) {
         List<NaverNewsItem> items = response.getItems();
         List<NaverNewsItem> newItems = new ArrayList<>();
         for (NaverNewsItem item : items) {
