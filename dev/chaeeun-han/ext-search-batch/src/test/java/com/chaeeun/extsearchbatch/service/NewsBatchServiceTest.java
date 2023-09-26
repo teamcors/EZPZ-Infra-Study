@@ -2,6 +2,7 @@ package com.chaeeun.extsearchbatch.service;
 
 import com.chaeeun.extsearchbatch.domain.NaverNewsItem;
 import com.chaeeun.extsearchbatch.repository.NaverNewsItemRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+@Slf4j
 @SpringBootTest(properties = {"spring.config.location = classpath:application.yml"})
 public class NewsBatchServiceTest {
 
@@ -57,7 +58,7 @@ public class NewsBatchServiceTest {
         newsBatchService.naverApiTest();
 
         // 예상하는 값(현재 행 수 + 10)과 현재 데이터베이스의 행 수 비교
-        assertEquals(currentRowCount + 10, newsRepo.count());
+        assertEquals(currentRowCount + 10, newsRepo.count(), "Failed to load 10 pieces of data.");
     }
 
     @Test
@@ -65,10 +66,11 @@ public class NewsBatchServiceTest {
     public void newsKeywordTest() throws Exception {
         List<NaverNewsItem> newsData = newsRepo.findAll();
 
-        assertTrue(!newsData.isEmpty());
+        assertTrue(!newsData.isEmpty(), "*** NewsData is Empty ***");
 
         for (NaverNewsItem item : newsData) {
-            assertTrue(item.getTitle().contains("주식") || item.getDescription().contains("주식"));
+            assertTrue(item.getTitle().contains(KEYWORD) || item.getDescription().contains(KEYWORD), "*** ID:" + item.getId() + " => Keyword not included.");
+            log.info("*** ID:" + String.valueOf(item.getId()) + " => Keyword included.");
         }
     }
 }
