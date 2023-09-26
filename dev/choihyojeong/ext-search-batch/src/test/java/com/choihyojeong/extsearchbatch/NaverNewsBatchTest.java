@@ -49,9 +49,9 @@ class NaverNewsBatchTest {
     private RestTemplate restTemplate = new RestTemplate();
 
     int success = 0;
-
-    @DisplayName("BatchTest: 새로운 뉴스와 적재된 뉴스의 개수가 같다.")
+    
     @Test
+    @DisplayName("BatchTest: 새로운 뉴스와 적재된 뉴스의 개수가 같다.")
     public void getBatchNewsNumber() throws Exception {
         //given
         int saveNewsLen = 0; // DB에 저장된 뉴스 개수
@@ -87,8 +87,8 @@ class NaverNewsBatchTest {
 
     }
 
-    @DisplayName("KeywordTest: 적재된 뉴스 title, description에 '주식'이 들어가있다")
     @Test
+    @DisplayName("KeywordTest: 적재된 뉴스 title, description에 '주식'이 들어가있다")
     public void checkKeyword() throws Exception {
 
         //given
