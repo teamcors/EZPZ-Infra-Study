@@ -36,6 +36,8 @@ public class NewsBatchServiceTest {
     @Value("${NAVER.CLIENT_SECRET}")
     private String CLIENT_SECRET;
 
+    private final String KEYWORD = "주식";
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -58,8 +60,9 @@ public class NewsBatchServiceTest {
     }
 
     @Test
-    @DisplayName("주식_단어가_포함되어있다")
+    @DisplayName("키워드가_포함되어있다")
     public void newsKeywordTest() throws Exception {
+        newsBatchService.naverApiTest();
         List<NaverNewsItem> newsData = newsRepo.findAll();
 
         assertTrue(!newsData.isEmpty(), "*** NewsData is Empty ***");
