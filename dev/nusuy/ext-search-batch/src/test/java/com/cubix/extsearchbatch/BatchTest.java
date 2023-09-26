@@ -29,8 +29,8 @@ public class BatchTest {
         this.newsRepository = newsRepository;
     }
 
-    @DisplayName("적재 데이터량 테스트")
     @Test
+    @DisplayName("적재 데이터량 테스트")
     public void quantityTest() {
         // given
         long expectedRawSize = 1000;
@@ -48,8 +48,8 @@ public class BatchTest {
         }
     }
 
-    @DisplayName("Query 테스트")
     @Test
+    @DisplayName("Query 테스트")
     public void queryTest() {
         // given
         String query = "주식";
