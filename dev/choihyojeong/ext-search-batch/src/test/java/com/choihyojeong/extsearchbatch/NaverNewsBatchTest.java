@@ -25,15 +25,9 @@ import java.util.stream.Collectors;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
-
 class NaverNewsBatchTest {
 
-    @Autowired
-    protected MockMvc mockMvc;
 
-    @Autowired
-    private WebApplicationContext context;
 
     @Autowired
     NaverNewsRepository NaverNewsRepoTest;
