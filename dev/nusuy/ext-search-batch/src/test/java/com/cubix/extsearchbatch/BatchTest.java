@@ -44,7 +44,7 @@ public class BatchTest {
 
         assertThat(rawData.size()).isEqualTo(expectedRawSize);
         for (NewsEntity news : resultData) {
-            assertThat(newsRepository.findTop1ByTitle(news.getTitle())).isNotNull();
+            assertThat(newsRepository.findTop1ByTitle(news.getTitle())).as("[Test failed: 중복 데이터 존재] - " + news.getTitle()).isNotNull();
         }
     }
 
@@ -61,7 +61,7 @@ public class BatchTest {
         ArrayList<NewsEntity> resultData = dataUpdateService.getResultData();
         for (NewsEntity news : resultData) {
             boolean isPassed = news.getTitle().contains(query) || news.getDescription().contains(query);
-            assertThat(isPassed).isTrue();
+            assertThat(isPassed).as("[Test failed: Query 미포함] - " + news.getTitle() + " / " + news.getDescription()).isTrue();
         }
     }
 }
