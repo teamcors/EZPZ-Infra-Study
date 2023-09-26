@@ -11,8 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest(properties = {"spring.config.location = classpath:application.yml"})
+@Transactional
 public class NewsBatchServiceTest {
 
     @InjectMocks
@@ -49,16 +50,11 @@ public class NewsBatchServiceTest {
 
 
     @Test
-    @Rollback(false)
     @DisplayName("적재_개수가_10개다")
     public void newsBatchTest() throws Exception {
-        // 현재 데이터베이스에 저장된 행 수를 조회
-        long currentRowCount = newsRepo.count();
-
         newsBatchService.naverApiTest();
 
-        // 예상하는 값(현재 행 수 + 10)과 현재 데이터베이스의 행 수 비교
-        assertEquals(currentRowCount + 10, newsRepo.count(), "Failed to load 10 pieces of data.");
+        assertEquals(10, newsRepo.count(), "Failed to load 10 pieces of data.");
     }
 
     @Test
