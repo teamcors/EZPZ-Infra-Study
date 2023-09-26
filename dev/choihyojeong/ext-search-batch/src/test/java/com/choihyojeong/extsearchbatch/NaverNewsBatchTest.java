@@ -83,7 +83,7 @@ class NaverNewsBatchTest {
 
         //then
         // 3. 그 개수가 0에서 10사이인지
-        Assertions.assertThat(saveNewsLen).isBetween(0,10);
+        Assertions.assertThat(saveNewsLen).as("새로 적재된 뉴스의 개수가 0~10범위에 들지 않음").isBetween(0,10);
 
     }
 
@@ -116,7 +116,7 @@ class NaverNewsBatchTest {
         }
 
         //then
-        Assertions.assertThat(success).isEqualTo(10);
+        Assertions.assertThat(success).as("주식키워드가 들어간 뉴스가 10개가 아님").isEqualTo(10);
     }
     private MultiValueMap<String, String> httpConnect() {
         final HttpHeaders headers = new HttpHeaders();
