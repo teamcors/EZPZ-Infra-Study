@@ -1,9 +1,8 @@
 package com.cubix.extsearchbatch;
 
-import com.cubix.extsearchbatch.dto.NaverRawNewsItemDto;
+import com.cubix.extsearchbatch.entity.NewsEntity;
 import com.cubix.extsearchbatch.entity.NewsRepository;
 import com.cubix.extsearchbatch.service.DataUpdateService;
-import com.cubix.extsearchbatch.util.data.NewsDataReader;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,14 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BatchTest {
     private final DataUpdateService dataUpdateService;
     private final NewsRepository newsRepository;
-    private final NewsDataReader newsDataReader;
-    final int DISPLAY_DEF = 100;
 
     @Autowired
-    public BatchTest(DataUpdateService dataUpdateService, NewsRepository newsRepository, NewsDataReader newsDataReader) {
+    public BatchTest(DataUpdateService dataUpdateService, NewsRepository newsRepository) {
         this.dataUpdateService = dataUpdateService;
         this.newsRepository = newsRepository;
-        this.newsDataReader = newsDataReader;
     }
 
     @Test
@@ -53,12 +49,13 @@ public class BatchTest {
         String query = "주식";
 
         // when
-        ArrayList<NaverRawNewsItemDto> items = newsDataReader.get(DISPLAY_DEF, 1).getItems();
+        dataUpdateService.updateNewsData();
 
         // then
-        for (NaverRawNewsItemDto news : items) {
+        List<NewsEntity> newsEntityList = newsRepository.findAll();
+        for (NewsEntity news : newsEntityList) {
             boolean isPassed = news.getTitle().contains(query) || news.getDescription().contains(query);
-            assertThat(isPassed).as("[Test failed: Query 미포함] - " + " / " + news.getTitle() + " / " + news.getDescription()).isTrue();
+            assertThat(isPassed).as("[Test failed: Query 미포함] - " + news.getTitle() + " / " + news.getTitle() + " / " + news.getDescription()).isTrue();
         }
     }
 }
