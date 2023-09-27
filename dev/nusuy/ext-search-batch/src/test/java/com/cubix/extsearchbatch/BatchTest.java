@@ -1,6 +1,8 @@
 package com.cubix.extsearchbatch;
 
 import com.cubix.extsearchbatch.dto.NaverRawNewsItemDto;
+import com.cubix.extsearchbatch.entity.NewsRepository;
+import com.cubix.extsearchbatch.service.DataUpdateService;
 import com.cubix.extsearchbatch.util.data.NewsDataReader;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -18,11 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("ext-search-batch Test")
 @SpringBootTest
 public class BatchTest {
+    private final DataUpdateService dataUpdateService;
+    private final NewsRepository newsRepository;
     private final NewsDataReader newsDataReader;
     final int DISPLAY_DEF = 100;
 
     @Autowired
-    public BatchTest(NewsDataReader newsDataReader) {
+    public BatchTest(DataUpdateService dataUpdateService, NewsRepository newsRepository, NewsDataReader newsDataReader) {
+        this.dataUpdateService = dataUpdateService;
+        this.newsRepository = newsRepository;
         this.newsDataReader = newsDataReader;
     }
 
@@ -30,13 +36,13 @@ public class BatchTest {
     @DisplayName("적재 데이터량 테스트")
     public void quantityTest() {
         // given
-        long expectedSize = 100;
+        long expectedSize = 1000;
 
         // when
-        ArrayList<NaverRawNewsItemDto> items = newsDataReader.get(DISPLAY_DEF, 1).getItems();
+        dataUpdateService.updateNewsData();
 
         // then
-        long size = items.size();
+        long size = newsRepository.count();
         assertThat(size).as("[Test Failed: 1,000 건 적재 실패] - actual: " + size).isEqualTo(expectedSize);
     }
 
