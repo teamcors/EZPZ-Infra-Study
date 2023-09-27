@@ -6,6 +6,7 @@ import com.chaeeun.extsearchbatch.repository.NaverNewsItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +23,14 @@ import java.util.List;
 @Service
 @Slf4j
 public class NewsBatchService {
-    private final NaverNewsItemRepository newsRepo;
+    @Autowired NaverNewsItemRepository newsRepo;
     private RestTemplate restTemplate = new RestTemplate();
 
     @Value("${NAVER.CLIENT_ID}")
-    private String clientId;
+    private String CLIENT_ID;
 
     @Value("${NAVER.CLIENT_SECRET}")
-    private String clientSecret;
+    private String CLIENT_SECRET;
 
     @Transactional
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
@@ -41,15 +42,15 @@ public class NewsBatchService {
                 .queryParam("query","주식")
                 .queryParam("display",10)
                 .queryParam("start", 1)
-                .queryParam("sort","sim")
+                .queryParam("sort","date") // default: sim
                 .encode()
                 .build()
                 .toUri();
 
         RequestEntity<Void> req = RequestEntity
                 .get(uri)
-                .header("X-Naver-Client-Id",clientId)
-                .header("X-Naver-Client-Secret",clientSecret)
+                .header("X-Naver-Client-Id",CLIENT_ID)
+                .header("X-Naver-Client-Secret",CLIENT_SECRET)
                 .build();
 
         ResponseEntity<NaverResultDto> searchList = restTemplate.exchange(req, NaverResultDto.class);
