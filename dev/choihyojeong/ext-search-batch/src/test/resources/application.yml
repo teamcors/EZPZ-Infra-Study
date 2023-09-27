@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username:
+    password:
+  mvc:
+    servlet:
+      load-on-startup: 1
+  jpa:
+    database : mysql
+    database-platform : org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      show_sql: true
+      format_sql: true
+      use_sql_comments: true
+  profiles:
+    include :
+      - secrets
+
+server:
+  port: 8081
+
+
+naver :
+  base:
+    url: https://openapi.naver.com
+    path: /v1/search/news.json
