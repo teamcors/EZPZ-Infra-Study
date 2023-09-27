@@ -6,7 +6,6 @@ import com.cubix.extsearchbatch.exception.OpenApiRequestException;
 import com.cubix.extsearchbatch.exception.OpenApiResponseException;
 import com.cubix.extsearchbatch.util.data.NewsDataReader;
 import com.cubix.extsearchbatch.util.data.NewsDataWriter;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,11 +21,6 @@ public class DataUpdateService {
     private final NewsRepository newsRepository;
     private final NewsDataReader newsDataReader;
     private final NewsDataWriter newsDataWriter;
-
-    @PostConstruct
-    public void onStartup() {
-        updateNewsData();
-    }
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void updateNewsData() {
