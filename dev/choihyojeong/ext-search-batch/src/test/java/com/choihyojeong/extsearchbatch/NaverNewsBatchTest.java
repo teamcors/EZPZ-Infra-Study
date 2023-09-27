@@ -3,6 +3,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.format.annotation.DateTimeFormat;;
+import org.springframework.transaction.annotation.Transactional;
 import org.assertj.core.api.Assertions;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class NaverNewsBatchTest {
-
 
     @Autowired
     NaverNewsRepository NaverNewsRepoTest;
@@ -63,6 +64,7 @@ class NaverNewsBatchTest {
     public void checkKeyword() throws Exception {
 
         //given
+        NaverNewsService.naverNewsApi();
         List<NaverNewsItem> findtop10 = NaverNewsRepoTest.findTop10ByOrderByIdDesc(); //id 내림차순으로 top 10개 가져옴
 
         // 1. findtop10 list에서 gettitle로 title만 받아와 새로운 list로 저장
@@ -71,16 +73,11 @@ class NaverNewsBatchTest {
         //when
         for (int i = 0; i < 10; i++) {
             // decription과 title에 '주식' 키워드가 있는지
-            if(latestTitle != null) {
-                NaverNewsItem savedNews = NaverNewsRepoTest.findByTitle((latestTitle.get(i)));
-                if (savedNews.getTitle().contains("주식")) {
-                    success = success +1;
-                } else if (savedNews.getDescription().contains("주식")) {
-                    success = success +1;
-                }
-            }
-            else {
-                log.info("적재된 뉴스 데이터가 없습니다");
+            NaverNewsItem savedNews = NaverNewsRepoTest.findByTitle((latestTitle.get(i)));
+            if (savedNews.getTitle().contains("주식")) {
+                success = success +1;
+            } else if (savedNews.getDescription().contains("주식")) {
+                success = success +1;
             }
         }
 
