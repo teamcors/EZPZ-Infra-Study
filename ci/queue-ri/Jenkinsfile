@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('secret.yml download') {
+        stage('Fetch application-ci.yml') {
             steps {
                 withCredentials([file(credentialsId: 'application-ci', variable: 'ymlFile')]) {
                     script {
