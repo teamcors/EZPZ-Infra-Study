@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+//    triggers {
+//        githubPush()
+//    }
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                echo '* * * Pulling... ' + env.BRANCH_NAME
+                git branch: env.BRANCH_NAME,
+                    credentialsId: 'Iv1.3da0845f91606cdf',
+                    url: 'https://github.com/GDSC-CUBIX/EZPZ-Infra-Study'
+            }
+        }
+
+        stage('Fetch application-ci.yml') {
+            steps {
+                withCredentials([file(credentialsId: 'application-ci', variable: 'ymlFile')]) {
+                    script {
+                        sh 'cp $ymlFile dev/queue-ri/ext-search-batch/src/main/resources/application.yml'
+                    }
+		        }
+	        }
+        }
+        
+        stage('Gradle Build') {
+            steps {
+                echo '* * * Build jar (skip test)'
+                dir('dev/queue-ri/ext-search-batch'){
+                    sh """
+                    chmod +x ./gradlew
+                    ./gradlew clean build -x test
+                    """
+                }
+            }
+        }
+    }
+
+    /* Cleanup workspace */
+    post {
+        success {
+            echo "* * * SUCCESS: 성공적으로 빌드했습니다."
+        }
+        failure {
+            echo "* * * FAILURE: 빌드에 실패했습니다."
+        }
+       always {
+           deleteDir()
+           echo "* * * Workspace cleaned up successfully."
+       }
+   }
+}
