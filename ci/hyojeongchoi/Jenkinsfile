@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    
+    triggers {
+        githubPush()
+    }
+    
+    stages {
+        stage('Push'){
+            steps {
+                echo 'Success to check push'
+            }
+        }
+    }
+    
+}
