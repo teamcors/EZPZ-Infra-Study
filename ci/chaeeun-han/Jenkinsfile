@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+
+        stage('github_clone') {
+            steps {
+                git branch: 'feature/10-chaeeun-han', credentialsId: 'CUBIXJenkinsTest', url: 'https://github.com/GDSC-CUBIX/EZPZ-Infra-Study.git'
+            }
+        }
+
+        stage('secrets.yml download') {
+            steps {
+                withCredentials([file(credentialsId: 'test-secrets', variable: 'dbConfigFile')]) {
+                    script {
+                        sh 'cp $dbConfigFile dev/chaeeun-han/ext-search-batch/src/test/resources/application-secrets.yml'
+                        sh 'cp $dbConfigFile dev/chaeeun-han/ext-search-batch/src/main/resources/application-secrets.yml'
+                    }
+                }
+            }
+        }
+
+        stage('build') {
+            steps {
+                dir('dev/chaeeun-han/ext-search-batch'){
+                    sh """
+                    chmod +x ./gradlew
+                    ./gradlew clean build
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "빌드 성공!"
+        }
+        failure {
+            echo "빌드 실패..."
+        }
+    }
+}
