@@ -21,12 +21,6 @@ import java.net.URI;
 @RequiredArgsConstructor
 @Slf4j
 public class NewsDataReader {
-    @Value("${OPEN_API_BASE_URL}")
-    private String BASE_URL;
-
-    @Value("${OPEN_API_PATH}")
-    private String PATH;
-
     @Value("${OPEN_API_CLIENT_ID}")
     private String CLIENT_ID;
 
@@ -48,6 +42,8 @@ public class NewsDataReader {
 
     // Url setting
     public URI setUri(int display, int start) {
+        final String BASE_URL = "https://openapi.naver.com";
+        final String PATH = "/v1/search/news.json";
         return UriComponentsBuilder
                 .fromUriString(BASE_URL)
                 .path(PATH)
