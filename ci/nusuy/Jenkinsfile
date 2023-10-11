@@ -6,17 +6,59 @@ pipeline {
     }
 
     stages {
-        stage('Print Hello') {
+        stage('Ready') {
             steps {
-                echo '* * * SUCCESS: Hello Jenkins!'
+                echo 'Ready to build...'
+                git branch: env.BRANCH_NAME,
+                    credentialsId: 'Iv1.2497a20421157e60',
+                    url: 'https://github.com/GDSC-CUBIX/EZPZ-Infra-Study'
+            }
+        }
+
+        stage('Set application.properties') {
+            steps {
+                withCredentials([file(credentialsId: 'cubix-secret', variable: 'secret'),
+                                file(credentialsId: 'cubix-secret-test', variable: 'testSecret')]) {
+                    script {
+                        sh "chmod +x -R ${env.WORKSPACE}"
+                        sh 'cp $secret dev/nusuy/ext-search-batch/src/main/resources/application.properties'
+                        if (fileExists('dev/nusuy/ext-search-batch/src/test/resources/application.properties')) {
+                            sh 'cp $testSecret dev/nusuy/ext-search-batch/src/test/resources/application.properties'
+                        }
+                    }
+                }
+            }
+
+            post {
+                success {
+                    echo '[SUCCESS] Setting application.properties successed.'
+                }
+                failure {
+                    echo '[ERROR] Setting application.properties failed.'
+                }
+            }
+        }
+
+        stage('Build'){
+            steps {
+                echo 'Build'
+                dir('dev/nusuy/ext-search-batch') {
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew clean build'
+                }
+            }
+
+            post {
+                success {
+                    echo '[SUCCESS] Build successed.'
+                }
+                failure {
+                    echo '[ERROR] Build failed.'
+                }
+                always {
+                    cleanWs()
+                }
             }
         }
     }
-
-    /* Cleanup workspace */
-    post {
-       always {
-           deleteDir()
-       }
-   }
 }
