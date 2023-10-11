@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+
+        stage('github_clone') {
+            steps {
+                git branch: 'feature/10-hyojeongchoi', credentialsId: 'Iv1.03782133274a9841', url: 'https://github.com/GDSC-CUBIX/EZPZ-Infra-Study.git'
+            }
+        }
+
+        stage('secrets.yml download') {
+            steps {
+                withCredentials([file(credentialsId: 'secret-id', variable: 'dbConfigFile')]) {
+                    script {
+                        sh 'cp $dbConfigFile dev/choihyojeong/ext-search-batch/src/main/resources/application-secrets.yml'
+                    }
+                }
+            }
+        }
+
+        stage('build') {
+            steps {
+                dir('dev/choihyojeong/ext-search-batch'){
+                    sh """
+                    chmod +x ./gradlew
+                    ./gradlew clean build
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Success to build Gradle"
+        }
+        failure {
+            echo "Failed to build Gradle"
+        }
+    }
+}
