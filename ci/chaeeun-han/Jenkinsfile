@@ -7,6 +7,14 @@ pipeline {
     // }
 
     stages {
+        stage('for the PR') {
+            when {
+                branch 'PR-*'
+            }
+            steps {
+                echo 'this only runs for the PRs'
+            }
+        }
 
         stage('github_clone') {
             steps {
@@ -33,6 +41,15 @@ pipeline {
                     ./gradlew clean build -x test
                     """
                 }
+            }
+        }
+
+        stage('stage for PR') {
+            when {
+                bracnh 'PR-*'
+            }
+            steps {
+                echo 'this only runs for the PRs'
             }
         }
     }
