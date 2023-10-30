@@ -12,7 +12,7 @@ pipeline {
                 branch 'PR-*'
             }
             steps {
-                echo 'this only runs for the PRs'
+                echo '*** this only runs for the PRs ***'
             }
         }
 
@@ -44,22 +44,12 @@ pipeline {
             }
         }
 
-        stage('stage for PR') {
-            when {
-                bracnh 'PR-*'
-            }
-            steps {
-                echo 'this only runs for the PRs'
-            }
-        }
-    }
-
     post {
         success {
-            echo "빌드 성공!"
+            echo "*** status: SUCCESS"
         }
         failure {
-            echo "빌드 실패..."
+            echo "*** status: FAILURE"
         }
     }
 }
