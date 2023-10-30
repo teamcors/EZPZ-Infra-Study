@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    // 불필요한 코드 삭제
-    // triggers {
-    //     githubPush()
-    // }
-
     stages {
         stage('for the PR') {
             when {
@@ -43,14 +38,14 @@ pipeline {
                 }
             }
         }
+    }
 
-        post {
-            success {
-                echo "*** buildStatus: SUCCESS"
-            }
-            failure {
-                echo "*** buildStatus: FAILURE"
-            }
+    post {
+        success {
+            echo "*** buildStatus: SUCCESS"
+        }
+        failure {
+            echo "*** buildStatus: FAILURE"
         }
     }
 }
