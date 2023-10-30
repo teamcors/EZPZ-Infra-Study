@@ -44,12 +44,13 @@ pipeline {
             }
         }
 
-    post {
-        success {
-            echo "*** status: SUCCESS"
-        }
-        failure {
-            echo "*** status: FAILURE"
+        post {
+            success {
+                echo "*** buildStatus: SUCCESS"
+            }
+            failure {
+                echo "*** buildStatus: FAILURE"
+            }
         }
     }
 }
