@@ -47,5 +47,9 @@ pipeline {
         failure {
             echo "*** buildStatus: FAILURE"
         }
+        always {
+           deleteDir()
+           echo "*** delete Directory"
+       }
     }
 }
